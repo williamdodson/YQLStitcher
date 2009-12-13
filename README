@@ -1,0 +1,144 @@
+=============================================================================
+YQLStitcher: Simple class to wrap the YQL API and cache the results
+=============================================================================
+
+-- Introduction:
+
+Sometimes you just get tired of swatting flies with a hammer. No offense, but
+working with something like MagpieRSS or SimplePie for YQL feed aggregation
+is a bit heavy-handed. So I decided to create a simple class that acts as a
+wrapper for the YQL API and caches the results of your queries locally.
+
+-- API:
+
+Currently there are only three public methods for the class:
+
+__construct($cache, $timeout=3600, $feeds, $format="xml", $query, $limit=10, $unique="channel.item.title", $random=false):
+Sets up properties for the object and returns an instance of YQLStitcher.
+
+$cache: Full file system path for the preferred cache folder.
+$timeout: Integer value in seconds to cache the local file (default 1 hour).
+$feeds: An array of URI values to stitch together with YQL.
+$format: Format to return from YQL (defaults to XML).
+$query: The unescaped query string to send through YQL.
+$limit: Integer value expressing the maximum number of results (default 10).
+$unique: A unique field to limit the search by. This was added to prevent
+         YQL from returning duplicates (default "channel.item.title").
+$random: Boolean to switch on randomizing results (default is false)
+
+get_items(): 
+Returns an array of SimpleXML objects for each item from the results
+
+errors($error, $return=false):
+Returns an array of errors, but only if return is true;
+
+=============================================================================
+
+-- Usage:
+
+Setting things up is easy, but there are some assumptions made here for the
+sake of brevity and implementation. This class is dependent on the following
+PHP modules:
+
+1. SimpleXML
+2. MD5
+
+You will also need to have write permissions for your web root folder so the
+class can create and write to a cache folder. The cache folder will be auto-
+matically created if you have the proper permissions. Otherwise just create
+the folder manually and things should work fine.
+
+Just include the YQLStitcher class in your file:
+
+<?php
+/*require the YQLStitcher class*/
+require_once getenv("DOCUMENT_ROOT") . '/yqlstitcher/yqlstitcher.class.php';
+?>
+
+Then set up some defaults to supply to our class instance:
+
+<?php
+/*cache folder*/
+$cache = getenv("DOCUMENT_ROOT") . "/cache";
+
+/*time in seconds to retain the cache file (defaults to 1 hour)*/
+$timeout = 60;
+
+/*feeds we want to stitch together*/
+$feeds = array(
+  "http://feeds.feedburner.com/errtheblog",
+  "http://feeds.feedburner.com/jquery/"
+);
+
+/*return data format*/
+$format = 'xml';
+
+/*the query to execute*/
+$query = "select channel.title,channel.link,channel.item.title,channel.item.description,channel.item.link,channel.item.pubDate from xml";
+
+?>
+
+Then just instantiate the new class:
+
+<?php
+/*new YQLStitcher instance*/
+$yql = new YQLStitcher($cache, $timeout, $feeds, $format, $query, 15, '', true);
+?>
+
+Now you have access to the public methods. So you can see the results:
+
+<?php
+/*the items we want to display*/
+$items = $yql->get_items();
+
+/*loop over and display each of the YQL newsfeed items*/
+foreach ($items as $item) {
+  echo '<p><a href="' . $item->channel->item->link . '">' . $item->channel->item->title . '</a></p>';
+}
+?>
+
+Or view the errors:
+
+<?php
+/*the items we want to display*/
+$errors = $yql->errors();
+
+/*loop over and display each of the errors*/
+foreach ($errors as $error) {
+  echo '<p>' . $error . '</p>';
+}
+?>
+
+You can also control the display of items based on whether there are errors:
+
+<?php
+/*the items we want to display*/
+$items = $yql->get_items();
+
+if(!empty($yql->errors())) {
+  // respond to errors or quietly fail...
+} else {
+  // display the feed items
+}
+?>
+
+
+-- TODO:
+
+- Clean-up the cache file reading/writing code a bit.
+- Add a method to recursively convert the SimpleXML objects to arrays.
+- Implement the serialization methods so we can store serialized arrays in
+  the cache file instead of XML.
+
+=============================================================================
+
+-- License:
+
+No stinkin' license here. Use it, abuse it, tell your friends you wrote the
+whole thing while spelunking in South America. Just leave this read me file
+intact so other folks can read how to use it.
+
+Created by: William Dodson <http://obxdesignworks.com/>
+(C) 2010 Anyone who uses it. Spread the love and pay it forward.
+
+=============================================================================

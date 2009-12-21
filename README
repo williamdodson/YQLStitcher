@@ -40,8 +40,9 @@ Setting things up is easy, but there are some assumptions made here for the
 sake of brevity and implementation. This class is dependent on the following
 PHP modules:
 
-1. SimpleXML
-2. MD5
+1. cURL
+2. SimpleXML
+3. MD5
 
 You will also need to have write permissions for your web root folder so the
 class can create and write to a cache folder. The cache folder will be auto-

@@ -1,8 +1,14 @@
 <?php
+// get the current file directory
+function get_file_dir() {
+  global $argv;
+  return realpath($argv[0]);
+}
+$cwd = get_file_dir();
 // require the YQLStitcher class
-require_once getenv("DOCUMENT_ROOT") . '/YQLStitcher/yqlstitcher.class.php';
+require_once $cwd . '/YQLStitcher/yqlstitcher.class.php';
 // cache folder
-$cache = getenv("DOCUMENT_ROOT") . "/cache";
+$cache = $cwd . "/cache";
 // time in seconds to retain the cache file (defaults to 1 hour)
 $timeout = 60;
 //feeds we want to stitch together

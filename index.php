@@ -40,7 +40,7 @@ $items = $yql->get_items();
 // loop over and display the newsfeed items
 foreach ($items as $item) {
   echo '<h2>Link: <a href="' . $item->channel->item->link . '">' . $item->channel->item->title . '</a></h2>';
-  echo '<p><small>Published on: ' . date('Y-m-d', strtotime($item->channel->item->pubDate)) . ' | Source: <a href="' . $item->channel->link . '">' . $item->channel->title . '</a></small></p>';
+  echo '<p><small>Published on: ' . defined($item->channel->item->pubDate) ? date('Y-m-d', strtotime($item->channel->item->pubDate)) . ' | ' : '<em>unavailable</em> | ' . 'Source: <a href="' . $item->channel->link . '">' . $item->channel->title . '</a></small></p>';
   echo $item->channel->item->description;
 }
 ?>

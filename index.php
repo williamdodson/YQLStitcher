@@ -13,7 +13,7 @@ $cache = $cwd . '/cache';
 $timeout = 60;
 //feeds we want to stitch together
 $feeds = array(
-  "http://www.w3.org/News/atom.xml",
+  "http://feeds.delicious.com/v2/rss/tag/webdesign?count=15",
   "http://www.alistapart.com/site/rss"
 );
 // return data format

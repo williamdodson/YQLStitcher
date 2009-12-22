@@ -6,9 +6,9 @@ function get_file_dir() {
 }
 $cwd = get_file_dir();
 // require the YQLStitcher class
-require_once $cwd . '/YQLStitcher/yqlstitcher.class.php';
+require_once './YQLStitcher/yqlstitcher.class.php';
 // cache folder
-$cache = $cwd . "/cache";
+$cache = './cache';
 // time in seconds to retain the cache file (defaults to 1 hour)
 $timeout = 60;
 //feeds we want to stitch together
